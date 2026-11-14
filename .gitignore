@@ -1,0 +1,15 @@
+.venv/
+.venv-*/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+*credentials*.json
+*service-account*.json
+chamados_demo.jsonl
+*.log
+
+# Relatórios gerados localmente
+RELATORIO_*.json
+RELATORIO_*.txt

@@ -1,0 +1,4 @@
+[
+ {"id":"wifi:0:0","title":"Wi-Fi — EXEMPLO FICTÍCIO","text":"No ambiente fictício de treinamento, abra as configurações de rede, selecione a rede EMPRESA e use suas credenciais corporativas apenas na tela de autenticação do sistema. Se falhar, informe a mensagem de erro ao suporte, sem enviar sua senha.","url":"https://docs.google.com/"},
+ {"id":"impressora:0:0","title":"Impressora — EXEMPLO FICTÍCIO","text":"Para a impressora fictícia do laboratório, confira se ela está ligada e conectada à rede. Verifique a fila de impressão e informe ao suporte o nome da impressora e a mensagem exibida caso o erro continue.","url":"https://docs.google.com/"}
+]

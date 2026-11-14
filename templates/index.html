@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Central de suporte · Novo atendimento</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="brand-icon">+</span>Central de suporte<span class="brand-sub">TI & pessoas</span></a><span class="badge">{{ 'Demonstração · registros locais' if demo else 'Atendimento interno' }}</span></header>
+<main class="layout">
+<aside><span class="eyebrow">ESTAMOS AQUI PARA AJUDAR</span><h1><span>Seu trabalho</span><span>em movimento.</span></h1><p class="intro">Conte o que aconteceu. Vamos buscar uma orientação e, se precisar, encaminhar para a equipe de TI.</p>
+<ol class="steps"><li class="{{ 'active' if state.stage == 'form' }}"><span>01</span><div><strong>Conte o problema</strong><small>Uma descrição faz a diferença.</small></div></li><li class="{{ 'active' if state.stage == 'guidance' }}"><span>02</span><div><strong>Receba uma orientação</strong><small>Com base na documentação interna.</small></div></li><li class="{{ 'active' if state.stage in ['ticket','done','resolved'] }}"><span>03</span><div><strong>Resolva ou abra um chamado</strong><small>Seguimos com você até o próximo passo.</small></div></li></ol>
+<div class="privacy"><strong>Cuide das suas informações</strong><p>Não inclua senhas, tokens ou dados confidenciais. A descrição e os trechos da base são processados pela Groq.</p></div></aside>
+<section class="card">
+{% if error %}<div class="alert" role="alert">{{ error }}</div>{% endif %}
+{% macro hidden(action) %}<input type="hidden" name="csrf" value="{{ state.csrf }}"><input type="hidden" name="action" value="{{ action }}">{% endmacro %}
+{% if state.stage == 'form' %}
+<span class="eyebrow">NOVO ATENDIMENTO</span><h2>Como podemos ajudar?</h2><p class="muted">Preencha os dados abaixo para começar.</p>
+<form method="post">{{ hidden('triage') }}<div class="fields"><label>Seu nome<input name="name" autocomplete="name" maxlength="200" required placeholder="Como você se chama?" value="{{ state.get('data', {}).get('name','') }}"></label><label>Setor<input name="department" maxlength="200" required placeholder="Ex.: Financeiro" value="{{ state.get('data', {}).get('department','') }}"></label></div>
+<label>O que está acontecendo?<textarea name="question" rows="6" maxlength="4000" required placeholder="Descreva o problema, quando começou e as mensagens de erro que apareceram.">{{ state.get('data', {}).get('question','') }}</textarea><small>Até 4.000 caracteres. Quanto mais contexto, melhor a orientação.</small></label>
+<label class="check"><input type="checkbox" name="human" value="yes"><span><strong>Prefiro falar com a equipe de TI</strong><small>Ir diretamente para a abertura de chamado.</small></span></label>
+<button class="primary" type="submit">Continuar atendimento <span aria-hidden="true">→</span></button><p class="footnote">Você poderá revisar a orientação antes de abrir um chamado.</p></form>
+{% elif state.stage in ['guidance','ticket'] %}
+<span class="eyebrow">{{ 'ORIENTAÇÃO ENCONTRADA' if state.stage == 'guidance' else 'ABERTURA DE CHAMADO' }}</span><h2>{{ 'Vamos tentar resolver?' if state.stage == 'guidance' else 'Vamos acionar a equipe.' }}</h2>
+<div class="answer">{{ state.result.resposta }}</div>
+{% if state.result.fontes %}<div class="sources"><strong>Documentação consultada</strong>{% for source in state.result.fontes %}<a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.titulo }} ↗</a>{% endfor %}</div>{% endif %}
+{% if state.stage == 'guidance' %}<h3>A orientação resolveu o problema?</h3><div class="actions"><form method="post">{{ hidden('resolved') }}<button class="primary">Sim, resolvido</button></form><form method="post">{{ hidden('escalate') }}<button class="secondary">Não, abrir chamado</button></form></div>
+{% else %}<form method="post">{{ hidden('open') }}<label>Quem está sendo afetado?<select name="impact" required><option value="">Selecione o impacto</option><option value="individual">Somente eu · prioridade Normal</option><option value="setor">Meu setor · prioridade Alta</option><option value="empresa">Toda a empresa · prioridade Crítica</option><option value="seguranca">Incidente de segurança · prioridade Crítica</option></select></label><p class="notice">Em emergência ou incidente de segurança, acione também o canal emergencial da empresa. Esta tela não envia alertas.</p><button class="primary">Confirmar abertura do chamado →</button></form>{% endif %}
+{% elif state.stage == 'resolved' %}<div class="success-icon">✓</div><span class="eyebrow">TUDO CERTO</span><h2>Que bom ter ajudado!</h2><p class="muted">Atendimento encerrado como resolvido por você. Nenhum chamado foi aberto.</p>
+{% elif state.stage == 'done' %}
+{% if state.ticket.registrado %}<div class="success-icon">✓</div><span class="eyebrow">{{ 'REGISTRO LOCAL' if demo else 'REGISTRO CONFIRMADO' }}</span><h2>Seu chamado foi aberto.</h2><p class="muted">{{ 'A simulação foi salva no arquivo local.' if demo else 'A solicitação foi registrada na planilha de suporte.' }}</p><div class="protocol"><small>SEU PROTOCOLO</small><strong>{{ state.ticket.protocolo }}</strong></div><p>Status: <span class="status">Aberto</span></p>
+{% else %}<h2>Gravação não confirmada</h2><p class="notice">{{ state.ticket.mensagem }}</p><div class="protocol"><small>REFERÊNCIA DA TENTATIVA</small><strong>{{ state.ticket.referencia_tentativa }}</strong></div>{% endif %}
+{% endif %}
+{% if state.stage != 'form' %}<form method="post" class="restart">{{ hidden('new') }}<button class="secondary">Iniciar outro atendimento</button></form>{% endif %}
+</section></main><footer>Central de suporte interno <span>Uma conversa. Um próximo passo.</span></footer>
+</body></html>
