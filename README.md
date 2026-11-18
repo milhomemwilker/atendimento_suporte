@@ -144,3 +144,9 @@ Os testes locais verificam regras e contratos simulados. Integração Google e i
 O adaptador usa a API HTTPS de chat completions com JSON Object Mode. A validação de ação e fontes permanece em `core.py`. HTTP 401/403 (credenciais/acesso), 429 (limite), 5xx, timeout e respostas truncadas ou inválidas provocam encaminhamento para chamado, sem exibir detalhes da credencial. Não há repetição automática de inferência.
 
 `--init-sheet` continua funcionando sem chave Groq. O modo `--demo` também continua independente de credenciais. O arquivo `.env.example` não é carregado automaticamente. Testes mockados verificam o contrato HTTP; a inferência real depende de uma chave nova configurada localmente e não foi executada nesta entrega.
+
+## Licença
+
+Este projeto é distribuído sob a **GNU General Public License, versão 3 (GPL-3.0-only)**. Consulte o texto completo em [LICENSE](LICENSE).
+
+Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo sob os termos da GNU GPL versão 3, publicada pela Free Software Foundation. É distribuído sem qualquer garantia, conforme os termos da licença.
